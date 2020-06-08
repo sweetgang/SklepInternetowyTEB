@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Sklep</title>
+</head>
+<body>
+<h1>[[${newAtribute}]]</h1>
+<table>
+    <tr >
+        <td >Id</td>
+        <td >Name</td>
+        <td >Kod Towaru</td>
+    </tr>
+    <tr th:each="item : ${list_of_item}">
+        <td th:text="${item.getId()}">id</td>
+        <td th:text="${item.getName()}">name</td>
+        <td th:text="${item.getKodProduktu()}">kod</td>
+    </tr>
+</table>
+
+</body>
+</html>
