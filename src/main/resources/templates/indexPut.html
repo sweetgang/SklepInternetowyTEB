@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Sklep</title>
+</head>
+<body>
+<h1>Fill in the fields</h1>
+<form action="/sklep/kup/" method="post">
+    <input type="hidden" name="_method" value="PUT">
+    <table>
+        <tr >
+            <td >Name</td>
+            <td >Kod Towaru</td>
+        </tr>
+        <tr >
+            <td ><input type="text" name="name" ></input></td>
+            <td ><input type="text" name="kodTowaru" ></input></td>
+        </tr>
+        <tr >
+            <td ><button type="submit">UPDATE</button></td>
+
+        </tr>
+    </table>
+</form>
+
+
+</body>
+</html>
