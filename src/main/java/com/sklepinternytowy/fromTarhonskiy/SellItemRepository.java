@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SellItemRepository extends CrudRepository<SellItem,Long> {
+    SellItem findByKodProduktu(String kodProduktu);
     void deleteByKodProduktu(String kodProduktu);
 
 }
