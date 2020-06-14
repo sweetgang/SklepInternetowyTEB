@@ -2,9 +2,11 @@ package com.sklepinternytowy.fromTarhonskiy;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,18 +19,19 @@ public class SellItemControler {
     private SellItemRepository sellItemRepository;
 
     @RequestMapping(value = "/sklep/kup",method = RequestMethod.GET)
-    public String firstFunction(Model model){
-        addLinkAttribute(1,model);
-        model.addAttribute("list_of_item",sellItemRepository.findAll());
-        model.addAttribute("newAtribute","ALLOHA");
+    public String findItem( @RequestParam(value="kodProduktu", required=false) String kodProduktu,Model model)
+    {
+        if (kodProduktu != null) {
+            addLinkAttribute(1, model);
+            model.addAttribute("list_of_item", sellItemRepository.findByKodProduktu(kodProduktu));
+            model.addAttribute("newAtribute", "Your item");
+        } else {
+            addLinkAttribute(0, model);
+            model.addAttribute("list_of_item", sellItemRepository.findAll());
+            model.addAttribute("newAtribute", "ALLOHA");
+        }
         return "index";
-    }
-    @RequestMapping(value = "/sklep/kup/{kodProduktu}",method = RequestMethod.GET)
-    public String findItem( @PathVariable String kodProduktu,Model model){
-        addLinkAttribute(1,model);
-        model.addAttribute("list_of_item",sellItemRepository.findByKodProduktu(kodProduktu));
-        model.addAttribute("newAtribute","ALLOHA");
-        return "index";
+
     }
 
     @RequestMapping(value = "/sklep/kup",method = RequestMethod.POST)
@@ -41,7 +44,8 @@ public class SellItemControler {
     }
 
     @RequestMapping(value = "/sklep/kup",method = RequestMethod.PUT)
-    public String updateItem(@RequestBody SellItemRequest sellItemRequest,Model model){
+    public String updateItem(@RequestBody SellItemRequest sellItemRequest,Model model)
+            throws IOException {
         addLinkAttribute(3,model);
         Long id = sellItemRepository.findByKodProduktu(sellItemRequest.getKodProduktu()).getId();
         SellItem sellItem = new SellItem(id,sellItemRequest.getName(),sellItemRequest.getKodProduktu());
@@ -50,9 +54,13 @@ public class SellItemControler {
         return "index";
     }
 
-    @RequestMapping(value = "/sklep/kup/{kodProduktu}",method = RequestMethod.DELETE)
-    public String kupItem( @PathVariable String kodProduktu, Model model){
+    @Transactional
+    @RequestMapping(value = "/sklep/kup",method = RequestMethod.DELETE)
+    public String kupItem( @RequestParam("kodProduktu") String kodProduktu, Model model) {
         addLinkAttribute(4,model);
+        if (sellItemRepository.findByKodProduktu(kodProduktu)== null) {
+            return "wrongItem";
+        }
         sellItemRepository.deleteByKodProduktu(kodProduktu);
         model.addAttribute("newAtribute","You bought item" + kodProduktu);
         return "index";
@@ -61,7 +69,7 @@ public class SellItemControler {
     public Model addLinkAttribute(int numberDeletedLink, Model model){
         ArrayList<String> linkValue = new ArrayList<String> ();
         linkValue.addAll(Arrays.asList("/index.html","/indexGetByKodTowaru.html","/indexPost.html",
-              "/indexPut.html","/indexDelete.html"));
+                "/indexPut.html","/indexDelete.html"));
         List<String> linkValueText = new ArrayList<String> ();
         linkValueText.addAll( Arrays.asList(" Find all item ==>"," Find item ==>"," Add item ==>",
                 " Update item ==>"," Buy item ==>"));
